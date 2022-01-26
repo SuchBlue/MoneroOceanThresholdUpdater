@@ -1,3 +1,5 @@
+# Made by SuchBlue -=- https://github.com/MoneroOceanThresholdUpdater #
+
 from time import sleep
 import requests
 import json
@@ -20,24 +22,55 @@ headers = {
 
 while True:
     try:
-        threshold = float(input("enter threshold: "))
-        timeout = float(input("enter timeout (minutes): "))
-        address = str(input("enter address: "))
-        if address.lower() == "default":
-            address = "enteryouraddresshere"
-        payload = {"username":address,"threshold":threshold}
-        while True:
-            r = requests.post("https://api.moneroocean.stream/user/updateThreshold", data=json.dumps(payload), headers=headers)
-            if str(i).endswith("1") and (i < 11 or i > 19):
-                print(f"Sent a request for the {str(i)}st time.")
-            elif str(i).endswith("2") and (i < 11 or i > 19):
-                print(f"Sent a request for the {str(i)}nd time.")
-            elif str(i).endswith("3") and (i < 11 or i > 19):
-                print(f"Sent a request for the {str(i)}rd time.")
+        threshold = float(input("Enter Threshold: "))
+        timeout = float(input("Enter Timeout (minutes): "))
+        address = str(input("Enter XMR Address: "))
+        out = [address]
+
+        def otherAddress():
+            # Change string to array
+            newAddress = str(input("Please enter another XMR address. "))
+            out.append(newAddress)
+
+        def oaDialog():
+            choice = str(input("Do you want to enter another address? (y/n): "))
+            if(choice.startswith("y")):
+                otherAddress()
+                oaDialog()
+            elif(choice.startswith("n")):
+                pass
             else:
-                print(f"Sent a request for the {str(i)}th time.")
-            sleep(timeout * 60)
-            i += 1
+                print("Invalid choice.")
+                oaDialog()
+
+        oaDialog()
+        
+        if not (out == [address]):
+            address = out
+
+        # print(f"[DEBUG] {address}")
+        # print(f"[DEBUG] {type(address)}")
+
+        if type(address) == list:
+            while True:
+                for s in address:
+                    payload = {"username":s,"threshold":threshold}
+                    r = requests.post("https://api.moneroocean.stream/user/updateThreshold", data=json.dumps(payload), headers=headers)
+                    print(f"Sent a request for address {str(s)}. Total times: {str(i)}")
+                    i += 1
+                sleep(timeout * 60)
+
+        elif type(address) == str:
+            if address.lower() == "default":
+                address = "enter your address here"
+
+            payload = {"username":address,"threshold":threshold}
+            while True:
+                r = requests.post("https://api.moneroocean.stream/user/updateThreshold", data=json.dumps(payload), headers=headers)
+                print(f"Sent a request. Total times: {str(i)}")
+                sleep(timeout * 60)
+                i += 1
+        
     except ValueError:
         print("An error occurred. (Did you put a real number?)")
         pass
