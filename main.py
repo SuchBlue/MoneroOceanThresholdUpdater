@@ -1,4 +1,4 @@
-# Made by SuchBlue -=- https://github.com/MoneroOceanThresholdUpdater #
+# Made by SuchBlue -=- https://github.com/SuchBlue/MoneroOceanThresholdUpdater #
 
 from time import sleep
 import requests
